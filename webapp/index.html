@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiniela Mundial 2026 - WebApp</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>⚽ Quiniela Mundial 2026</h1>
+    <nav id="main-nav" style="display:none">
+      <button onclick="showTab('home')" class="nav-btn active">🏠 Inicio</button>
+      <button onclick="showTab('quinielas')" class="nav-btn">📋 Quinielas</button>
+      <button onclick="showTab('partidos')" class="nav-btn">⚽ Partidos</button>
+      <button onclick="showTab('predicciones')" class="nav-btn">📝 Predicciones</button>
+      <button onclick="showTab('simulacion')" class="nav-btn">🧪 Simulación</button>
+      <button onclick="logout()" class="nav-btn">🚪 Salir</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <!-- Auth -->
+    <section id="auth-section" class="card">
+      <h2>🔐 Acceso de Administrador</h2>
+      <div id="login-form">
+        <p id="auth-msg" style="color:var(--textl)">Inicia sesión para gestionar tus quinielas.</p>
+        <div class="fg"><label>Usuario</label><input id="login-user" autocomplete="off"></div>
+        <div class="fg"><label>Contraseña</label><input type="password" id="login-pass"></div>
+        <button class="btn btn-p" onclick="login()">Ingresar</button>
+        <p style="margin-top:10px"><a href="#" onclick="showRegister()">Registrarme como admin</a></p>
+      </div>
+      <div id="register-form" style="display:none">
+        <p>Crea tu cuenta de administrador.</p>
+        <div class="fg"><label>Nombre</label><input id="reg-name"></div>
+        <div class="fg"><label>Usuario</label><input id="reg-user" autocomplete="off"></div>
+        <div class="fg"><label>Contraseña</label><input type="password" id="reg-pass"></div>
+        <div class="fg"><label>Confirmar contraseña</label><input type="password" id="reg-pass2"></div>
+        <button class="btn btn-p" onclick="register()">Registrarme</button>
+        <p style="margin-top:10px"><a href="#" onclick="showLogin()">Ya tengo cuenta</a></p>
+      </div>
+    </section>
+
+    <!-- Home -->
+    <section id="home-section" class="tab" style="display:none">
+      <section class="home-hero">
+        <span class="ball">🏆</span>
+        <h1>Quiniela <span>Mundial FIFA 2026</span></h1>
+        <p>Crea y gestiona múltiples quinielas independientes. Invita participantes y llena resultados manualmente.</p>
+        <div class="hl">
+          <button class="la" onclick="showTab('quinielas')">➕ Crear Quiniela Nueva</button>
+          <button class="lt" onclick="showTab('partidos')">⚽ Ir a Partidos</button>
+        </div>
+      </section>
+
+      <div class="card">
+        <h2>📋 Quinielas Existentes</h2>
+        <div id="home-quinielas-list"><p class="empty">No hay quinielas creadas.</p></div>
+      </div>
+
+      <section class="feats">
+        <div class="feat"><div class="icon">⚽</div><h3>Predice Partidos</h3><p>Marcador exacto o ganador por partido.</p></div>
+        <div class="feat"><div class="icon">🏅</div><h3>Gana Puntos</h3><p>3 pts exacto · 1 pt ganador.</p></div>
+        <div class="feat"><div class="icon">🌍</div><h3>48 Selecciones</h3><p>12 grupos del Mundial 2026.</p></div>
+        <div class="feat"><div class="icon">🧪</div><h3>Simulación</h3><p>Genera datos de prueba para simular.</p></div>
+      </section>
+    </section>
+
+    <!-- Quinielas -->
+    <section id="quinielas-section" class="tab" style="display:none">
+      <div class="card">
+        <h2>➕ Crear Quiniela Nueva</h2>
+        <div class="frow">
+          <div class="fg"><label>Nombre</label><input id="new-q-name" placeholder="Ej: Quiniela Oficina"></div>
+          <div class="fg">
+            <label>Etapa inicial</label>
+            <select id="new-q-stage">
+              <option value="GROUP_STAGE">Fase de Grupos</option>
+              <option value="ROUND_OF_32">Ronda de 32</option>
+              <option value="ROUND_OF_16">Octavos</option>
+              <option value="QUARTER_FINALS">Cuartos</option>
+              <option value="SEMI_FINALS">Semifinales</option>
+              <option value="FINAL">Final</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-p" onclick="createQuiniela()">Crear Quiniela</button>
+      </div>
+
+      <div class="card">
+        <h2>👤 Agregar Miembro a una Quiniela</h2>
+        <div class="frow">
+          <div class="fg"><label>Quiniela</label><select id="global-q-select"><option value="">— Selecciona —</option></select></div>
+          <div class="fg"><label>Nombre</label><input id="global-p-name" placeholder="Nombre completo"></div>
+          <div class="fg"><label>Email</label><input type="email" id="global-p-email" placeholder="correo@ejemplo.com"></div>
+        </div>
+        <button class="btn btn-p" onclick="addParticipantGlobal()">Agregar Miembro</button>
+      </div>
+
+      <div class="card">
+        <h2>📋 Mis Quinielas — Gestionar todas</h2>
+        <div id="admin-quinielas-list"><p class="empty">No hay quinielas.</p></div>
+      </div>
+
+      <div id="quiniela-detail" class="card" style="display:none">
+        <div class="detail-header">
+          <div>
+            <h2 id="detail-title"></h2>
+            <p id="detail-meta"></p>
+          </div>
+          <div class="detail-actions">
+            <button class="btn btn-g" onclick="showPredictionsForCurrent()">📝 Predicciones</button>
+            <button class="btn btn-d" onclick="closeDetail()">Cerrar</button>
+          </div>
+        </div>
+        <div class="tabs">
+          <button class="detail-tab active" onclick="showDetailTab('participants')">Participantes</button>
+          <button class="detail-tab" onclick="showDetailTab('leaderboard')">Leaderboard</button>
+        </div>
+        <div id="detail-participants" class="detail-panel">
+          <h3>Agregar participante</h3>
+          <div class="frow">
+            <div class="fg"><input id="detail-p-name" placeholder="Nombre"></div>
+            <div class="fg"><input type="email" id="detail-p-email" placeholder="Email"></div>
+          </div>
+          <button class="btn btn-p" onclick="addParticipantDetail()">Agregar</button>
+          <h3 style="margin-top:20px">Lista</h3>
+          <div id="detail-participants-list"></div>
+        </div>
+        <div id="detail-leaderboard" class="detail-panel" style="display:none">
+          <div id="detail-leaderboard-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Partidos -->
+    <section id="partidos-section" class="tab" style="display:none">
+      <div class="card">
+        <h2>⚽ Resultados de Partidos</h2>
+        <p class="hint">Edita fecha, estado y marcador. Presiona Guardar por cada partido.</p>
+        <div id="matches-list"></div>
+      </div>
+    </section>
+
+    <!-- Predicciones -->
+    <section id="predicciones-section" class="tab" style="display:none">
+      <div class="card">
+        <h2>📝 Ingresar Predicciones</h2>
+        <div class="frow">
+          <div class="fg"><label>Quiniela</label><select id="pred-q-select" onchange="onPredQChange()"><option value="">— Selecciona —</option></select></div>
+          <div class="fg"><label>Participante</label><select id="pred-p-select" onchange="renderPredForm()"><option value="">— Selecciona —</option></select></div>
+        </div>
+        <div id="pred-form"></div>
+      </div>
+    </section>
+
+    <!-- Simulación -->
+    <section id="simulacion-section" class="tab" style="display:none">
+      <div class="card">
+        <h2>🧪 Simulación</h2>
+        <p class="hint">Genera participantes de demostración y predicciones aleatorias.</p>
+        <div class="frow">
+          <div class="fg"><label>Quiniela</label><select id="sim-q-select"><option value="">— Selecciona —</option></select></div>
+          <div class="fg"><label>Cantidad</label><input type="number" id="sim-count" value="48" min="1" max="500"></div>
+        </div>
+        <button class="btn btn-p" onclick="generateDemo()">Generar Demo + Predicciones</button>
+        <button class="btn btn-g" onclick="clearDemo()">Limpiar Demo</button>
+        <div id="sim-result"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Quiniela Mundial 2026 · WebApp local · Sin servidor
+  </footer>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
